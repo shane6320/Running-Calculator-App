@@ -200,6 +200,17 @@ select:focus {
     border-color: #91a6ff;
 }
 
+/* --- Input sizing classes (replaces inline width styles) --- */
+.input-dist {
+    width: 90px;
+}
+.input-dist-sm {
+    width: 70px;
+}
+.input-hms {
+    width: 50px;
+}
+
 .calc-btn {
     width: 100%;
     padding: 0.73rem;
@@ -352,16 +363,15 @@ select:focus {
         font-size: 0.95rem;
     }
 
-    /* Override any inline style="width:90px" etc. on mobile */
-    input[type="number"][style*="width"] {
-        width: auto !important;
-        min-width: 48px;
-        max-width: 70px;
-        flex-shrink: 1;
+    /* Override class-based widths on mobile */
+    .input-dist {
+        width: 70px;
     }
-
-    select[style*="width"] {
-        width: auto !important;
+    .input-dist-sm {
+        width: 58px;
+    }
+    .input-hms {
+        width: 46px;
     }
 
     /* Tab bar: smaller text so all 4 tabs fit */

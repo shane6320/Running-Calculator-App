@@ -36,7 +36,7 @@
                 <form method="POST" class="calc-form" id="calcForm">
                     <div class="form-row">
                         <label for="distance">Distance:</label>
-                        <input type="number" step="0.01" min="0" name="distance" id="distance" required style="width: 90px;">
+                        <input type="number" step="0.01" min="0" name="distance" id="distance" required class="input-dist">
                         <select name="unit" id="unit">
                             <option value="km">km</option>
                             <option value="mi">mi</option>
@@ -51,14 +51,14 @@
                     </div>
                     <div class="form-row" id="time_row">
                         <label for="time_h">Time:</label>
-                        <input type="number" min="0" max="23" name="time_h" id="time_h" placeholder="hh" style="width: 50px;"> :
-                        <input type="number" min="0" max="59" name="time_m" id="time_m" placeholder="mm" style="width: 50px;"> :
-                        <input type="number" min="0" max="59" name="time_s" id="time_s" placeholder="ss" style="width: 50px;">
+                        <input type="number" min="0" max="23" name="time_h" id="time_h" placeholder="hh" class="input-hms"> :
+                        <input type="number" min="0" max="59" name="time_m" id="time_m" placeholder="mm" class="input-hms"> :
+                        <input type="number" min="0" max="59" name="time_s" id="time_s" placeholder="ss" class="input-hms">
                     </div>
                     <div class="form-row" id="pace_row" style="display:none;">
                         <label for="pace_min">Pace:</label>
-                        <input type="number" min="0" max="59" name="pace_min" id="pace_min" placeholder="min" style="width: 50px;"> :
-                        <input type="number" min="0" max="59" name="pace_sec" id="pace_sec" placeholder="sec" style="width: 50px;">
+                        <input type="number" min="0" max="59" name="pace_min" id="pace_min" placeholder="min" class="input-hms"> :
+                        <input type="number" min="0" max="59" name="pace_sec" id="pace_sec" placeholder="sec" class="input-hms">
                         <span id="pace_unit_label">min/<span id="pace_unit">km</span></span>
                     </div>
                     <div class="form-row">
@@ -94,7 +94,7 @@
                         <tbody id="multipoint-rows">
                             <tr>
                                 <td>1</td>
-                                <td><input type="number" step="0.01" min="0" name="mp_distance_1" style="width:70px;"></input> <span class="mp-distance-unit">km</span></td>
+                                <td><input type="number" step="0.01" min="0" name="mp_distance_1" class="input-dist-sm"> <span class="mp-distance-unit">km</span></td>
                                 <td>
                                     <div class="mp-time-row" id="mp_time_row_1">
                                         <input type="number" min="0" max="23" name="mp_time_h_1" placeholder="hh" class="mp-time"> :
@@ -121,7 +121,7 @@
                     const tbody = document.getElementById('multipoint-rows');
                     const tr = document.createElement('tr');
                     const u = (typeof getMpActiveUnit === 'function') ? getMpActiveUnit() : 'km';
-                    tr.innerHTML = `<td>${mpRowCount}</td><td><input type=\"number\" step=\"0.01\" min=\"0\" name=\"mp_distance_${mpRowCount}\" style=\"width:70px;\"></input> <span class=\"mp-distance-unit\">${u}</span></td><td><div class=\"mp-time-row\" id=\"mp_time_row_${mpRowCount}\"><input type=\"number\" min=\"0\" max=\"23\" name=\"mp_time_h_${mpRowCount}\" placeholder=\"hh\" class=\"mp-time\"> : <input type=\"number\" min=\"0\" max=\"59\" name=\"mp_time_m_${mpRowCount}\" placeholder=\"mm\" class=\"mp-time\"> : <input type=\"number\" min=\"0\" max=\"59\" name=\"mp_time_s_${mpRowCount}\" placeholder=\"ss\" class=\"mp-time\"></div><div class=\"mp-pace-row\" id=\"mp_pace_row_${mpRowCount}\" style=\"display:none;\"><input type=\"number\" min=\"0\" max=\"59\" name=\"mp_pace_min_${mpRowCount}\" placeholder=\"min\" class=\"mp-time\"> : <input type=\"number\" min=\"0\" max=\"59\" name=\"mp_pace_sec_${mpRowCount}\" placeholder=\"sec\" class=\"mp-time\"> <span>min/<span class=\"mp-pace-unit\">${u}</span></span></div></td>`;
+                    tr.innerHTML = `<td>${mpRowCount}</td><td><input type="number" step="0.01" min="0" name="mp_distance_${mpRowCount}" class="input-dist-sm"> <span class="mp-distance-unit">${u}</span></td><td><div class="mp-time-row" id="mp_time_row_${mpRowCount}"><input type="number" min="0" max="23" name="mp_time_h_${mpRowCount}" placeholder="hh" class="mp-time"> : <input type="number" min="0" max="59" name="mp_time_m_${mpRowCount}" placeholder="mm" class="mp-time"> : <input type="number" min="0" max="59" name="mp_time_s_${mpRowCount}" placeholder="ss" class="mp-time"></div><div class="mp-pace-row" id="mp_pace_row_${mpRowCount}" style="display:none;"><input type="number" min="0" max="59" name="mp_pace_min_${mpRowCount}" placeholder="min" class="mp-time"> : <input type="number" min="0" max="59" name="mp_pace_sec_${mpRowCount}" placeholder="sec" class="mp-time"> <span>min/<span class="mp-pace-unit">${u}</span></span></div></td>`;
                     tbody.appendChild(tr);
                     // Show/hide input fields based on current mode
                     toggleMpInputModeAll();
@@ -214,8 +214,8 @@
                     </div>
                     <div class="form-row" id="conv_pace_row">
                         <label for="conv_pace_min">Pace:</label>
-                        <input type="number" min="0" max="59" name="conv_pace_min" id="conv_pace_min" placeholder="min" style="width: 50px;"> :
-                        <input type="number" min="0" max="59" name="conv_pace_sec" id="conv_pace_sec" placeholder="sec" style="width: 50px;">
+                        <input type="number" min="0" max="59" name="conv_pace_min" id="conv_pace_min" placeholder="min" class="input-hms"> :
+                        <input type="number" min="0" max="59" name="conv_pace_sec" id="conv_pace_sec" placeholder="sec" class="input-hms">
                         <select name="conv_unit" id="conv_unit">
                             <option value="km">min/km</option>
                             <option value="mi">min/mi</option>
@@ -223,7 +223,7 @@
                     </div>
                     <div class="form-row" id="conv_speed_row" style="display:none;">
                         <label for="conv_speed">Speed:</label>
-                        <input type="number" min="0" step="0.01" name="conv_speed" id="conv_speed" placeholder="speed" style="width: 90px;">
+                        <input type="number" min="0" step="0.01" name="conv_speed" id="conv_speed" placeholder="speed" class="input-dist">
                         <select name="conv_speed_unit" id="conv_speed_unit">
                             <option value="kmh">km/h</option>
                             <option value="mih">mi/h</option>
@@ -303,18 +303,18 @@
                     </div>
                     <div class="form-row">
                         <label for="ft_current_dist">Current Distance:</label>
-                        <input type="number" step="0.01" min="0" name="ft_current_dist" id="ft_current_dist" style="width: 90px;">
+                        <input type="number" step="0.01" min="0" name="ft_current_dist" id="ft_current_dist" class="input-dist">
                         <span class="ft-unit-label">km</span>
                     </div>
                     <div class="form-row">
                         <label for="ft_time_h">Elapsed Time:</label>
-                        <input type="number" min="0" max="23" name="ft_time_h" id="ft_time_h" placeholder="hh" style="width: 50px;"> :
-                        <input type="number" min="0" max="59" name="ft_time_m" id="ft_time_m" placeholder="mm" style="width: 50px;"> :
-                        <input type="number" min="0" max="59" name="ft_time_s" id="ft_time_s" placeholder="ss" style="width: 50px;">
+                        <input type="number" min="0" max="23" name="ft_time_h" id="ft_time_h" placeholder="hh" class="input-hms"> :
+                        <input type="number" min="0" max="59" name="ft_time_m" id="ft_time_m" placeholder="mm" class="input-hms"> :
+                        <input type="number" min="0" max="59" name="ft_time_s" id="ft_time_s" placeholder="ss" class="input-hms">
                     </div>
                     <div class="form-row">
                         <label for="ft_full_dist">Full Distance:</label>
-                        <input type="number" step="0.01" min="0" name="ft_full_dist" id="ft_full_dist" style="width: 90px;">
+                        <input type="number" step="0.01" min="0" name="ft_full_dist" id="ft_full_dist" class="input-dist">
                         <span class="ft-unit-label">km</span>
                     </div>
                     <div class="form-row">
@@ -538,7 +538,7 @@ function clearPaceForm() {
                     tbody.innerHTML = `
                         <tr>
                             <td>1</td>
-                            <td><input type="number" step="0.01" min="0" name="mp_distance_1" style="width:70px;"></input> <span class="mp-distance-unit">km</span></td>
+                            <td><input type="number" step="0.01" min="0" name="mp_distance_1" class="input-dist-sm"> <span class="mp-distance-unit">km</span></td>
                             <td>
                                 <div class="mp-time-row" id="mp_time_row_1">
                                     <input type="number" min="0" max="23" name="mp_time_h_1" placeholder="hh" class="mp-time"> :
