@@ -122,6 +122,8 @@ body::before {
     width: 100%;
     margin: 0 auto;
     padding: 0 0 2.5rem;
+    overflow: hidden;       /* prevent children from overflowing on mobile */
+    box-sizing: border-box;
 }
 
 .calc-header {
@@ -306,21 +308,197 @@ select:focus {
 }
 
 @media (max-width: 760px) {
+
+    /* ===== Global mobile layout ===== */
     .main-nav-inner,
     .hero-inner,
     .calculator-section {
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .calculator-section {
+        padding-top: 1.5rem;
+        padding-bottom: 4.5rem;
+    }
+
+    .calc-card {
+        max-width: 100%;
+        border-radius: 8px;
+        overflow: hidden;          /* clip children to card width */
     }
 
     .calc-form {
-        padding-left: 1rem;
-        padding-right: 1rem;
+        padding: 1rem 0.7rem 0;
+    }
+
+    /* Make all form rows wrap instead of overflow */
+    .form-row {
+        flex-wrap: wrap;
+        gap: 0.35rem 0.5rem;
+    }
+
+    /* Labels: shrink so inputs get more space */
+    label {
+        min-width: unset;
+        font-size: 0.92rem;
+    }
+
+    /* All number inputs & selects: flexible width that respects container */
+    input[type="number"],
+    select {
+        max-width: 100%;
+        box-sizing: border-box;
+        font-size: 0.95rem;
+    }
+
+    /* Override any inline style="width:90px" etc. on mobile */
+    input[type="number"][style*="width"] {
+        width: auto !important;
+        min-width: 48px;
+        max-width: 70px;
+        flex-shrink: 1;
+    }
+
+    select[style*="width"] {
+        width: auto !important;
+    }
+
+    /* Tab bar: smaller text so all 4 tabs fit */
+    .tab {
+        font-size: 0.78rem;
+        padding: 0.6rem 0.15rem;
+        word-break: break-word;
+    }
+
+    .calc-header {
+        font-size: 1.25rem;
+        padding: 0.75rem 0;
+    }
+
+    .hero-inner h1 {
+        font-size: 1.4rem;
     }
 
     .lseg-footer-banner {
         flex-wrap: wrap;
         text-align: center;
         line-height: 1.4;
+        font-size: 0.78rem;
+        padding: 0.5rem 0.6rem;
+    }
+
+    /* ===== Pace tab ===== */
+    #tab-content-pace .form-row {
+        flex-wrap: wrap;
+    }
+
+    /* ===== Intervals tab ===== */
+    #tab-content-multipoint .calc-form {
+        padding-left: 0.4rem;
+        padding-right: 0.4rem;
+    }
+
+    #tab-content-multipoint thead {
+        display: none;
+    }
+
+    #tab-content-multipoint table {
+        display: block;
+    }
+
+    #tab-content-multipoint tbody,
+    #tab-content-multipoint tr {
+        display: block;
+        width: 100%;
+    }
+
+    #tab-content-multipoint tr {
+        background: #f7f8fa;
+        border: 1px solid #e0e3e8;
+        border-radius: 8px;
+        padding: 0.5rem;
+        margin-bottom: 0.6rem;
+    }
+
+    #tab-content-multipoint td {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.2rem 0;
+        text-align: left;
+        flex-wrap: wrap;
+    }
+
+    #tab-content-multipoint td:first-child {
+        font-weight: 700;
+        color: #1428e5;
+    }
+
+    #tab-content-multipoint td:first-child::before {
+        content: "Segment ";
+    }
+
+    #tab-content-multipoint td:nth-child(2)::before {
+        content: "Distance: ";
+        font-weight: 600;
+    }
+
+    #tab-content-multipoint td:nth-child(3)::before {
+        content: "Time/Pace: ";
+        font-weight: 600;
+    }
+
+    .mp-time-row {
+        min-width: unset;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .mp-time {
+        width: 40px !important;
+        min-width: 36px;
+    }
+
+    .mp-pace-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        align-items: center;
+    }
+
+    #tab-content-multipoint input[type="number"] {
+        width: 50px;
+    }
+
+    #tab-content-multipoint .form-row {
+        flex-wrap: wrap;
+        gap: 0.3rem 0.5rem;
+    }
+
+    #tab-content-multipoint .form-row label {
+        min-width: unset;
+    }
+
+    /* ===== Converter tab ===== */
+    #tab-content-converter .form-row {
+        flex-wrap: wrap;
+    }
+
+    /* ===== Finish Time tab ===== */
+    #tab-content-finishtime .form-row {
+        flex-wrap: wrap;
+    }
+
+    /* ===== Result box ===== */
+    .result-box {
+        padding: 0.8rem 0.7rem;
+        font-size: 0.95rem;
+    }
+
+    /* ===== Buttons ===== */
+    .calc-btn {
+        font-size: 0.95rem;
+        padding: 0.65rem;
     }
 }
