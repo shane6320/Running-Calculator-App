@@ -21,11 +21,34 @@
             <div class="hero-inner">
                 <h1>LSEG Run Club</h1>
             </div>
+            <!-- F1 checkered flag with waving effect -->
+            <div class="race-flag" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" preserveAspectRatio="none" width="100%" height="100%">
+                    <defs>
+                        <pattern id="checker" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <rect width="10" height="10" fill="#000"/>
+                            <rect x="10" y="10" width="10" height="10" fill="#000"/>
+                            <rect x="10" y="0" width="10" height="10" fill="#fff"/>
+                            <rect x="0" y="10" width="10" height="10" fill="#fff"/>
+                        </pattern>
+                        <!-- Gentle wave distortion filter -->
+                        <filter id="wave">
+                            <feTurbulence type="turbulence" baseFrequency="0.008 0.03" numOctaves="1" seed="2">
+                                <animate attributeName="baseFrequency" values="0.008 0.03;0.012 0.04;0.008 0.03" dur="6s" repeatCount="indefinite"/>
+                            </feTurbulence>
+                            <feDisplacementMap in="SourceGraphic" scale="6">
+                                <animate attributeName="scale" values="6;9;6" dur="6s" repeatCount="indefinite"/>
+                            </feDisplacementMap>
+                        </filter>
+                    </defs>
+                    <rect width="200" height="100" fill="url(#checker)" filter="url(#wave)"/>
+                </svg>
+            </div>
         </section>
 
         <div class="calculator-section">
         <div class="calc-card">
-            <div class="calc-header">Running Calculator</div>
+            <div class="calc-header">Calculator</div>
             <div class="tab-bar">
                 <button class="tab active" id="tab-pace" onclick="showTab('pace')" type="button">Pace</button>
                 <button class="tab" id="tab-multipoint" onclick="showTab('multipoint')" type="button">Intervals</button>
@@ -61,9 +84,9 @@
                         <input type="number" min="0" max="59" name="pace_sec" id="pace_sec" placeholder="sec" class="input-hms">
                         <span id="pace_unit_label">min/<span id="pace_unit">km</span></span>
                     </div>
-                    <div class="form-row">
+                    <div class="form-row button-row">
                         <button type="submit" class="calc-btn">Calculate</button>
-                        <button type="button" class="calc-btn" id="clearBtn" style="background:#b3c6e0;color:#222;margin-left:10px;" onclick="clearPaceForm()">Clear</button>
+                        <button type="button" class="calc-btn clear-btn" style="background:#b3c6e0;color:#222;" onclick="clearPaceForm()">Clear</button>
                     </div>
                 </form>
             </div>
@@ -110,8 +133,11 @@
                             </tr>
                         </tbody>
                     </table>
-                    <button type="button" class="calc-btn" onclick="addMultipointRow()">Add Segment</button>
-                    <button type="submit" class="calc-btn">Calculate</button>
+                    <div class="form-row button-row">
+                        <button type="button" class="calc-btn" onclick="addMultipointRow()">Add Segment</button>
+                        <button type="submit" class="calc-btn">Calculate</button>
+                        <button type="button" class="calc-btn" style="background:#b3c6e0;color:#222;" onclick="resetMultipoint()">Clear</button>
+                    </div>
                 </form>
                 <div id="multipoint-result"></div>
                 <script>
@@ -229,8 +255,9 @@
                             <option value="mih">mi/h</option>
                         </select>
                     </div>
-                    <div class="form-row">
+                    <div class="form-row button-row">
                         <button type="submit" class="calc-btn">Convert</button>
+                        <button type="button" class="calc-btn" style="background:#b3c6e0;color:#222;" onclick="resetConverter()">Clear</button>
                     </div>
                 </form>
                 <div id="converter-result"></div>
@@ -281,7 +308,12 @@
                             result = '<span class="error">Please enter a valid speed.</span>';
                         }
                     }
-                    document.getElementById('converter-result').innerHTML = result;
+                    var convTarget = document.getElementById('converter-result');
+                    if (result.indexOf('class="error"') !== -1) {
+                        convTarget.innerHTML = result;
+                    } else {
+                        convTarget.innerHTML = "<div class='result-box'>" + result + "</div>";
+                    }
                 }
                 // On tab switch, reset converter form and result
                 function resetConverter() {
@@ -317,8 +349,9 @@
                         <input type="number" step="0.01" min="0" name="ft_full_dist" id="ft_full_dist" class="input-dist">
                         <span class="ft-unit-label">km</span>
                     </div>
-                    <div class="form-row">
+                    <div class="form-row button-row">
                         <button type="submit" class="calc-btn">Estimate Finish Time</button>
+                        <button type="button" class="calc-btn" style="background:#b3c6e0;color:#222;" onclick="resetFinishTime()">Clear</button>
                     </div>
                 </form>
                 <div id="finishtime-result"></div>
@@ -343,7 +376,8 @@
                         var finishM = Math.floor((totalSec%3600)/60);
                         var finishS = totalSec%60;
                         var finishStr = finishH+":"+finishM.toString().padStart(2,'0')+":"+finishS.toString().padStart(2,'0');
-                        document.getElementById('finishtime-result').innerHTML = 'Estimated Finish Time: <b>'+finishStr+'</b>';
+                        var ftTarget = document.getElementById('finishtime-result');
+                        ftTarget.innerHTML = "<div class='result-box'>" + '<div><strong>Estimated Finish Time:</strong> ' + '<span>' + finishStr + '</span></div>' + "</div>";
                     } else {
                         document.getElementById('finishtime-result').innerHTML = '<span class="error">Please enter valid values (full distance must be greater than current distance).</span>';
                     }
@@ -485,6 +519,44 @@ function clearPaceForm() {
         paceResult.style.display = 'none';
     }
     try { sessionStorage.removeItem('paceCalculated'); } catch (e) {}
+}
+
+function resetMultipoint() {
+    var form = document.getElementById('multipointForm');
+    if (form) form.reset();
+    var tbody = document.getElementById('multipoint-rows');
+    if (tbody) {
+        tbody.innerHTML = `
+                        <tr>
+                            <td>1</td>
+                            <td><input type="number" step="0.01" min="0" name="mp_distance_1" class="input-dist-sm"> <span class="mp-distance-unit">km</span></td>
+                            <td>
+                                <div class="mp-time-row" id="mp_time_row_1">
+                                    <input type="number" min="0" max="23" name="mp_time_h_1" placeholder="hh" class="mp-time"> :
+                                    <input type="number" min="0" max="59" name="mp_time_m_1" placeholder="mm" class="mp-time"> :
+                                    <input type="number" min="0" max="59" name="mp_time_s_1" placeholder="ss" class="mp-time">
+                                </div>
+                                <div class="mp-pace-row" id="mp_pace_row_1" style="display:none;">
+                                    <input type="number" min="0" max="59" name="mp_pace_min_1" placeholder="min" class="mp-time"> :
+                                    <input type="number" min="0" max="59" name="mp_pace_sec_1" placeholder="sec" class="mp-time">
+                                    <span>min/<span class="mp-pace-unit">km</span></span>
+                                </div>
+                            </td>
+                        </tr>`;
+        try { mpRowCount = 1; } catch (e) {}
+        var mpTime = document.getElementById('mp_input_time');
+        var mpPace = document.getElementById('mp_input_pace');
+        if (mpTime) mpTime.checked = true;
+        if (mpPace) mpPace.checked = false;
+        var mpDistSel = document.getElementById('mp_dist_unit_select');
+        var mpPaceSel = document.getElementById('mp_pace_unit_select');
+        if (mpDistSel) mpDistSel.value = 'km';
+        if (mpPaceSel) mpPaceSel.value = 'km';
+        window.lastMpUnit = 'km';
+        try { if (typeof toggleMpInputModeAll === 'function') toggleMpInputModeAll(); } catch (e) {}
+    }
+    var mpRes = document.getElementById('multipoint-result');
+    if (mpRes) mpRes.innerHTML = '';
 }
 
 // When the Pace form is submitted, mark that a calculation was performed so

@@ -80,12 +80,49 @@ body::before {
     background: linear-gradient(90deg, #1428e5 0%, #1428e5 72%, #b0c9f0 100%);
     color: #ffffff;
     border-bottom: 1px solid #1740f2;
+    position: relative; /* allow pseudo-element decorations */
 }
 
 .hero-inner {
     max-width: 1280px;
     margin: 0 auto;
     padding: 1.1rem 1.2rem 1.3rem;
+    position: relative; /* keep content above decorative pseudo-element */
+    z-index: 1;
+}
+
+/* F1 waving checkered flag on right side of hero */
+.race-flag {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30%;          /* wider flag area */
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.22;       /* subtlety – tweak to taste */
+    overflow: hidden;
+    /* fade covers 85% of the flag area on the left */
+    -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 85%);
+    mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 85%);
+}
+.race-flag svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Remove old pseudo-element – replaced by .race-flag */
+.lseg-hero::after {
+    display: none;
+}
+
+@media (max-width: 760px) {
+    /* narrower strip on mobile to avoid crowding */
+    .race-flag {
+        width: 50%;
+        opacity: 0.18;
+    }
 }
 
 .hero-inner h1 {
@@ -179,6 +216,17 @@ body::before {
     gap: 0.7rem;
 }
 
+/* Button row: keeps multiple buttons aligned and responsive */
+.button-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.button-row .calc-btn {
+    flex: 1 1 0;
+    width: auto; /* allow flex sizing instead of fixed 100% */
+}
+
 label {
     min-width: 82px;
     font-weight: 600;
@@ -262,7 +310,7 @@ select:focus {
 }
 
 .mp-time {
-    width: 54px !important;
+    width: 60px !important;   /* interval hh/mm/ss box width – desktop */
     text-align: left;
     margin: 0;
 }
@@ -398,6 +446,16 @@ select:focus {
         padding: 0.5rem 0.6rem;
     }
 
+    /* Stack button rows on mobile so borders align and buttons fill width */
+    .button-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .button-row .calc-btn {
+        width: 100%;
+        flex: none;
+    }
+
     /* ===== Pace tab ===== */
     #tab-content-pace .form-row {
         flex-wrap: wrap;
@@ -466,8 +524,8 @@ select:focus {
     }
 
     .mp-time {
-        width: 40px !important;
-        min-width: 36px;
+        width: 52px !important;   /* interval hh/mm/ss box width – mobile */
+        min-width: 44px;
     }
 
     .mp-pace-row {
