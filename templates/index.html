@@ -46,6 +46,12 @@
             </div>
         </section>
 
+        <div class="main-tab-bar">
+            <button class="main-tab active" id="main-tab-calculator" onclick="showMainTab('calculator')" type="button">Calculator</button>
+            <button class="main-tab" id="main-tab-zones" onclick="showMainTab('zones')" type="button">Running Zones</button>
+        </div>
+
+        <div id="main-content-calculator">
         <div class="calculator-section">
         <div class="calc-card">
             <div class="calc-header">Calculator</div>
@@ -59,7 +65,7 @@
                 <form method="POST" class="calc-form" id="calcForm">
                     <div class="form-row">
                         <label for="distance">Distance:</label>
-                        <input type="number" step="0.01" min="0" name="distance" id="distance" required class="input-dist">
+                        <input type="number" step="0.01" min="0" name="distance" id="distance" placeholder="e.g. 5" required class="input-dist">
                         <select name="unit" id="unit">
                             <option value="km">km</option>
                             <option value="mi">mi</option>
@@ -500,6 +506,96 @@
             </script>
         </div>
         </div>
+        </div>
+
+        <div id="main-content-zones" style="display:none;">
+        <div class="calculator-section">
+        <div class="calc-card">
+            <div class="calc-header">Running Heart Rate Zones</div>
+            <form class="calc-form" id="zonesForm">
+                <div class="form-row">
+                    <label for="max_hr">Max Heart Rate:</label>
+                    <input type="number" min="100" max="230" step="1" name="max_hr" id="max_hr" placeholder="e.g. 190" class="input-dist" required>
+                    <span>bpm</span>
+                </div>
+                <div class="form-row" style="font-size:0.88rem;color:#667;margin-top:-0.6rem;">
+                    A common estimate: <strong>220 &minus; your age</strong>
+                </div>
+                <div class="form-row button-row">
+                    <button type="submit" class="calc-btn">Calculate Zones</button>
+                    <button type="button" class="calc-btn" style="background:#b3c6e0;color:#222;" onclick="resetZones()">Clear</button>
+                </div>
+            </form>
+            <div id="zones-result"></div>
+            <script>
+            document.getElementById('zonesForm').onsubmit = function(e) {
+                e.preventDefault();
+                var maxHR = parseInt(document.getElementById('max_hr').value || 0);
+                if (maxHR < 100 || maxHR > 230) {
+                    document.getElementById('zones-result').innerHTML = '<span class="error">Please enter a valid max heart rate (100–230 bpm).</span>';
+                    return;
+                }
+                var zones = [
+                    { zone: 1, name: 'Recovery / Easy', low: 0.50, high: 0.60,
+                      color: '#b8e6b8',
+                      desc: 'Very light effort. You can hold a full conversation easily. This zone builds a base aerobic foundation, promotes recovery, and helps warm up or cool down.',
+                      tip: 'Use this zone for warm-ups, cool-downs, and recovery runs. Keep sessions relaxed\u2014if you can\'t chat comfortably, slow down.' },
+                    { zone: 2, name: 'Aerobic / Base', low: 0.60, high: 0.70,
+                      color: '#a3d4f7',
+                      desc: 'Light to moderate effort. You can speak in sentences. This is the fat-burning zone; it improves cardiovascular efficiency and endurance.',
+                      tip: 'Most of your weekly mileage (60\u201380%) should be here. Run easy and build volume gradually\u2014consistency at this intensity builds a strong aerobic engine.' },
+                    { zone: 3, name: 'Tempo / Moderate', low: 0.70, high: 0.80,
+                      color: '#f7e07a',
+                      desc: 'Moderate effort\u2014comfortably hard. Speaking becomes harder (short phrases only). Improves aerobic capacity and lactate clearance.',
+                      tip: 'Include 1\u20132 tempo runs per week. Maintain a \u201ccomfortably hard\u201d pace you could sustain for about an hour. Avoid spending too much time here at the expense of Zone 2.' },
+                    { zone: 4, name: 'Threshold / Hard', low: 0.80, high: 0.90,
+                      color: '#f7a866',
+                      desc: 'Hard effort. Speaking limited to a few words. You\u2019re at or near your lactate threshold. Builds speed endurance and the ability to sustain faster paces.',
+                      tip: 'Use for interval training and threshold repeats (e.g., 4\u00d75 min hard with 2 min recovery). Limit to 1\u20132 sessions per week and ensure adequate recovery.' },
+                    { zone: 5, name: 'VO\u2082 Max / Maximum', low: 0.90, high: 1.00,
+                      color: '#f28b8b',
+                      desc: 'Maximum effort\u2014you can barely talk. Pushes your VO\u2082 max and neuromuscular power. Only sustainable for short bursts.',
+                      tip: 'Reserve for short, high-intensity intervals (e.g., 30 sec\u20132 min repeats). Keep total volume low and recover fully between reps. Not recommended every week.' }
+                ];
+                var html = '<div class="zones-table-wrapper">';
+                html += '<table class="zones-table"><thead><tr><th>Zone</th><th>Name</th><th>HR Range</th><th>% of Max</th></tr></thead><tbody>';
+                for (var i = 0; i < zones.length; i++) {
+                    var z = zones[i];
+                    var lo = Math.round(maxHR * z.low);
+                    var hi = Math.round(maxHR * z.high);
+                    html += '<tr style="background:' + z.color + '22;">';
+                    html += '<td><strong>' + z.zone + '</strong></td>';
+                    html += '<td>' + z.name + '</td>';
+                    html += '<td><strong>' + lo + ' \u2013 ' + hi + '</strong> bpm</td>';
+                    html += '<td>' + Math.round(z.low*100) + '\u2013' + Math.round(z.high*100) + '%</td>';
+                    html += '</tr>';
+                }
+                html += '</tbody></table></div>';
+
+                html += '<div class="zones-details">';
+                for (var j = 0; j < zones.length; j++) {
+                    var z2 = zones[j];
+                    var lo2 = Math.round(maxHR * z2.low);
+                    var hi2 = Math.round(maxHR * z2.high);
+                    html += '<div class="zone-card" style="border-left:4px solid ' + z2.color + ';">';
+                    html += '<div class="zone-card-header"><span class="zone-badge" style="background:' + z2.color + ';">Z' + z2.zone + '</span> ' + z2.name + ' <span class="zone-hr">' + lo2 + '\u2013' + hi2 + ' bpm</span></div>';
+                    html += '<p>' + z2.desc + '</p>';
+                    html += '<p class="zone-tip"><strong>\uD83D\uDCA1 Tip:</strong> ' + z2.tip + '</p>';
+                    html += '</div>';
+                }
+                html += '</div>';
+
+                document.getElementById('zones-result').innerHTML = html;
+            };
+            function resetZones() {
+                document.getElementById('zonesForm').reset();
+                document.getElementById('zones-result').innerHTML = '';
+            }
+            </script>
+        </div>
+        </div>
+        </div>
+
         <div class="lseg-footer-banner">
             <span id="lseg-date">Date: --</span>
             <span class="banner-separator">|</span>
@@ -652,6 +748,17 @@ function resetMultipoint() {
         }
     });
 })();
+
+function showMainTab(tab) {
+    var mainTabs = ['calculator', 'zones'];
+    mainTabs.forEach(function(t) {
+        document.getElementById('main-tab-' + t).classList.remove('active');
+        document.getElementById('main-content-' + t).style.display = 'none';
+    });
+    document.getElementById('main-tab-' + tab).classList.add('active');
+    document.getElementById('main-content-' + tab).style.display = '';
+    if (tab === 'zones' && typeof resetZones === 'function') resetZones();
+}
 
 function updateLsegBannerClock() {
     const now = new Date();
